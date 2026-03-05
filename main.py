@@ -210,6 +210,114 @@ def analyze_existing_team(team_str: str):
         print(f"❌ 分析失败: {e}")
 
 
+def run_auto_update():
+    """运行自动更新"""
+    from src.auto_updater import AutoUpdater
+    
+    updater = AutoUpdater()
+    results = updater.run_full_update()
+    
+    # 保存结果
+    output_file = Path(__file__).parent / "data" / "last_update_result.json"
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(results, f, ensure_ascii=False, indent=2)
+    
+    print("\n" + "=" * 60)
+    print("自动更新结果摘要")
+    print("=" * 60)
+    
+    if 'regulation_check' in results and results['regulation_check']:
+        print(f"📋 规则检查: {results['regulation_check'].get('message', 'N/A')}")
+    
+    if 'data_update' in results and results['data_update']:
+        if 'updated' in results['data_update']:
+            print(f"📊 数据更新: {results['data_update']['updated']} 成功, {results['data_update'].get('failed', 0)} 失败")
+        else:
+            print(f"📊 数据更新: {results['data_update'].get('error', '未知状态')}")
+    
+    if 'meta_analysis' in results and results['meta_analysis']:
+        print(f"🔍 环境分析: {results['meta_analysis'].get('summary', 'N/A')}")
+    
+    if 'counter_recommendation' in results and results['counter_recommendation']:
+        teams_count = results['counter_recommendation'].get('teams_generated', 0)
+        print(f"⚔️ 克制推荐: {teams_count} 支队伍已生成")
+    
+    print(f"\n💾 详细结果已保存至: {output_file}")
+
+
+def show_meta_analysis():
+    """显示当前环境分析"""
+    from src.auto_updater import MetaAnalyzer
+    
+    print_header("🔍 当前环境分析")
+    
+    analyzer = MetaAnalyzer()
+    analysis = analyzer.analyze_current_meta()
+    
+    print(f"\n📅 分析时间: {analysis['date']}")
+    print(f"🎮 对战规则: {analysis['format']}")
+    print(f"\n📊 环境总结: {analysis['summary']}")
+    
+    print("\n🏆 热门宝可梦 TOP 10:")
+    for i, p in enumerate(analysis['top_pokemon'][:10], 1):
+        name_zh = p.get('name_zh', '')
+        name_display = f"{p['name']} ({name_zh})" if name_zh else p['name']
+        print(f"   {i:2d}. {name_display}")
+    
+    print("\n🔗 热门核心组合:")
+    for combo in analysis['core_combinations'][:5]:
+        members_zh = combo.get('members_zh', [])
+        members_str = ' + '.join([f"{m} ({zh})" if zh else m 
+                                  for m, zh in zip(combo['members'], members_zh)])
+        print(f"   • {members_str}")
+    
+    print("\n🔥 热门属性分布:")
+    for type_name, count in list(analysis['type_distribution'].items())[:5]:
+        print(f"   • {type_name}: {count} 只")
+    
+    if 'trends' in analysis and 'rising' in analysis['trends']:
+        print("\n📈 上升趋势:")
+        for item in analysis['trends']['rising'][:5]:
+            name_zh = POKEMON_NAME_ZH.get(item['name'], '')
+            name_display = f"{item['name']} ({name_zh})" if name_zh else item['name']
+            print(f"   • {name_display}: +{item['change']:.1f}%")
+
+
+def show_counter_teams():
+    """显示克制队伍推荐"""
+    from src.auto_updater import MetaAnalyzer, CounterTeamRecommender
+    
+    print_header("⚔️ 克制队伍推荐")
+    
+    # 先获取环境分析
+    analyzer = MetaAnalyzer()
+    meta_analysis = analyzer.analyze_current_meta()
+    
+    # 生成克制推荐
+    recommender = CounterTeamRecommender()
+    result = recommender.generate_counter_teams(meta_analysis)
+    
+    print(f"\n🎯 目标环境: {result['target_meta']}")
+    
+    print("\n⚠️ 主要威胁:")
+    for threat in result['threats_analyzed'][:5]:
+        name_zh = threat.get('name_zh', '')
+        name_display = f"{threat['name']} ({name_zh})" if name_zh else threat['name']
+        weaknesses = ', '.join(threat['weaknesses'][:3]) if threat['weaknesses'] else 'N/A'
+        print(f"   • {name_display} - 弱点: {weaknesses}")
+    
+    print("\n🛡️ 推荐克制队伍:")
+    for i, team in enumerate(result['recommended_counter_teams'], 1):
+        print(f"\n   {i}. {team['name']}")
+        print(f"      策略: {team['strategy']}")
+        print(f"      目标: {team['target']}")
+        print(f"      成员: {', '.join(team['members_zh'])}")
+    
+    if result.get('ai_analysis') and result['ai_analysis'].get('status') == 'success':
+        print("\n🤖 AI 战术分析:")
+        print(result['ai_analysis']['analysis'])
+
+
 def main():
     """主函数"""
     parser = argparse.ArgumentParser(
@@ -221,6 +329,9 @@ def main():
   python main.py --collect-data               # 采集数据
   python main.py --recommend --style balanced # 生成平衡型队伍
   python main.py --analyze "Incineroar,Urshifu-Rapid-Strike,Flutter Mane,Rillaboom,Amoonguss,Landorus"
+  python main.py --auto-update                # 运行完整自动更新
+  python main.py --meta                       # 显示环境分析
+  python main.py --counter                    # 显示克制推荐
         """
     )
     
@@ -237,6 +348,12 @@ def main():
                         help='分析已有队伍（逗号分隔6只宝可梦名称）')
     parser.add_argument('--no-ai', action='store_true',
                         help='不使用 AI 推荐（仅本地分析）')
+    parser.add_argument('--auto-update', action='store_true',
+                        help='运行自动更新（规则检查、数据更新、环境分析、克制推荐）')
+    parser.add_argument('--meta', action='store_true',
+                        help='显示当前环境分析')
+    parser.add_argument('--counter', action='store_true',
+                        help='显示克制队伍推荐')
     
     args = parser.parse_args()
     
@@ -257,6 +374,15 @@ def main():
     
     if args.analyze:
         analyze_existing_team(args.analyze)
+    
+    if args.auto_update:
+        run_auto_update()
+    
+    if args.meta:
+        show_meta_analysis()
+    
+    if args.counter:
+        show_counter_teams()
 
 
 if __name__ == '__main__':

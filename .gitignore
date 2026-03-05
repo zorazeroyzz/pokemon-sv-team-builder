@@ -1,0 +1,9 @@
+*.log
+__pycache__/
+*.pyc
+.DS_Store
+
+# Data files (generated)
+*.db
+!data/type_chart.json
+!data/*.example.json
