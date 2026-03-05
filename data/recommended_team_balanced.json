@@ -1,0 +1,87 @@
+{
+  "team": [
+    "Incineroar",
+    "Urshifu-Rapid-Strike",
+    "Flutter Mane",
+    "Rillaboom",
+    "Amoonguss",
+    "Landorus"
+  ],
+  "members": [
+    {
+      "name": "Incineroar",
+      "moves": [
+        "根据对战环境选择",
+        "根据对战环境选择",
+        "根据对战环境选择",
+        "守住"
+      ],
+      "item": "根据战术选择",
+      "nature": "根据build选择",
+      "role": "待分析"
+    },
+    {
+      "name": "Urshifu-Rapid-Strike",
+      "moves": [
+        "根据对战环境选择",
+        "根据对战环境选择",
+        "根据对战环境选择",
+        "守住"
+      ],
+      "item": "根据战术选择",
+      "nature": "根据build选择",
+      "role": "待分析"
+    },
+    {
+      "name": "Flutter Mane",
+      "moves": [
+        "根据对战环境选择",
+        "根据对战环境选择",
+        "根据对战环境选择",
+        "守住"
+      ],
+      "item": "根据战术选择",
+      "nature": "根据build选择",
+      "role": "待分析"
+    },
+    {
+      "name": "Rillaboom",
+      "moves": [
+        "根据对战环境选择",
+        "根据对战环境选择",
+        "根据对战环境选择",
+        "守住"
+      ],
+      "item": "根据战术选择",
+      "nature": "根据build选择",
+      "role": "待分析"
+    },
+    {
+      "name": "Amoonguss",
+      "moves": [
+        "根据对战环境选择",
+        "根据对战环境选择",
+        "根据对战环境选择",
+        "守住"
+      ],
+      "item": "根据战术选择",
+      "nature": "根据build选择",
+      "role": "待分析"
+    },
+    {
+      "name": "Landorus",
+      "moves": [
+        "根据对战环境选择",
+        "根据对战环境选择",
+        "根据对战环境选择",
+        "守住"
+      ],
+      "item": "根据战术选择",
+      "nature": "根据build选择",
+      "role": "待分析"
+    }
+  ],
+  "strategy": "balanced型队伍，基于热门宝可梦组合",
+  "tips": "请参考 Pikalytics 获取详细配招",
+  "note": "AI 推荐服务暂时不可用，显示为基础推荐"
+}

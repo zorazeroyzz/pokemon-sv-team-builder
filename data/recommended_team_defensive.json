@@ -1,0 +1,86 @@
+{
+  "team": [
+    "Ting-Lu",
+    "Dondozo",
+    "Gouging Fire",
+    "Ursaluna",
+    "Incineroar",
+    "Amoonguss"
+  ],
+  "members": [
+    {
+      "name": "Ting-Lu",
+      "moves": [
+        "Ruination",
+        "Body Press",
+        "Stealth Rock",
+        "Protect"
+      ],
+      "item": "Leftovers",
+      "nature": "Impish",
+      "role": "物理盾/百分比伤害/钉控"
+    },
+    {
+      "name": "Dondozo",
+      "moves": [
+        "Wave Crash",
+        "Order Up",
+        "Rest",
+        "Sleep Talk"
+      ],
+      "item": "Chesto Berry",
+      "nature": "Careful",
+      "role": "特盾/主坦/回复核心"
+    },
+    {
+      "name": "Gouging Fire",
+      "moves": [
+        "Burning Bulwark",
+        "Flare Blitz",
+        "Morning Sun",
+        "Will-O-Wisp"
+      ],
+      "item": "Leftovers",
+      "nature": "Impish",
+      "role": "威吓手/鬼火干扰/回复"
+    },
+    {
+      "name": "Ursaluna",
+      "moves": [
+        "Facade",
+        "Headlong Rush",
+        "Swords Dance",
+        "Protect"
+      ],
+      "item": "Flame Orb",
+      "nature": "Brave",
+      "role": "主输出手/空间下爆发"
+    },
+    {
+      "name": "Incineroar",
+      "moves": [
+        "Fake Out",
+        "Flare Blitz",
+        "Parting Shot",
+        "Will-O-Wisp"
+      ],
+      "item": "Safety Goggles",
+      "nature": "Careful",
+      "role": "威吓轮转/控速/鬼火干扰"
+    },
+    {
+      "name": "Amoonguss",
+      "moves": [
+        "Spore",
+        "Rage Powder",
+        "Pollen Puff",
+        "Protect"
+      ],
+      "item": "Rocky Helmet",
+      "nature": "Sassy",
+      "role": "控速核心/愤怒粉掩护/孢子催眠"
+    }
+  ],
+  "strategy": "本队采用经典的双威吓+双再生+空间爆发的防守消耗体系。开局通过Incineroar/Gouging Fire的威吓+Amoonguss的愤怒粉/孢子建立控场，Ting-Lu的Ruination快速削减对手HP，Dondozo作为绝对特盾吸收伤害。Ursaluna在队友掩护下完成剑舞强化，利用140基础物攻+毅力特性+火焰宝珠的1.5倍加成打出毁灭性Facade。全队无脆皮，平均耐久极高，通过轮转消耗逐步压垮对手。",
+  "tips": "关键对局策略：1) 面对晴天队优先派出Ting-Lu压制固勒顿/故勒顿的日出特性；2) 遇到高速爆破队时，Amoonguss的孢子+Incineroar的击掌奇袭是保命关键；3) Ursaluna火焰宝珠触发后Facade威力翻倍，配合空间可秒杀大部分非抵抗目标；4) Dondozo的Order Up在Tatsugiri在场时威力翻倍，注意配合时机；5) 警惕对手清除之烟/黑雾消除强化，Ursaluna剑舞时机需谨慎选择。"
+}
