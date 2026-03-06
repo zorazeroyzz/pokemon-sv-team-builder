@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宝可梦VGC队伍推荐器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f0f6fc;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #8b949e;
+            font-size: 1.1em;
+        }
+        .controls {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .strategy-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .strategy-btn {
+            padding: 12px 24px;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+        .strategy-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.4);
+        }
+        .strategy-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+        }
+        .generate-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: #f5576c;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .team-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .pokemon-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .pokemon-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .pokemon-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .pokemon-sprite {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+        }
+        .pokemon-info h3 {
+            font-size: 1.3em;
+            margin-bottom: 5px;
+        }
+        .pokemon-info .name-en {
+            color: #8b949e;
+            font-size: 0.9em;
+        }
+        .types {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .type-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .type-normal { background: #A8A878; }
+        .type-fire { background: #F08030; }
+        .type-water { background: #6890F0; }
+        .type-electric { background: #F8D030; color: #333; }
+        .type-grass { background: #78C850; }
+        .type-ice { background: #98D8D8; color: #333; }
+        .type-fighting { background: #C03028; }
+        .type-poison { background: #A040A0; }
+        .type-ground { background: #E0C068; color: #333; }
+        .type-flying { background: #A890F0; }
+        .type-psychic { background: #F85888; }
+        .type-bug { background: #A8B820; }
+        .type-rock { background: #B8A038; }
+        .type-ghost { background: #705898; }
+        .type-dragon { background: #7038F8; }
+        .type-dark { background: #705848; }
+        .type-steel { background: #B8B8D0; color: #333; }
+        .type-fairy { background: #EE99AC; }
+        .moves-section {
+            margin-top: 15px;
+        }
+        .moves-section h4 {
+            color: #8b949e;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+        .moves-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .move-tag {
+            background: rgba(255,255,255,0.1);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+        .item-nature {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .item-nature > div {
+            flex: 1;
+        }
+        .item-nature h4 {
+            color: #8b949e;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+        .item-nature .value {
+            font-weight: bold;
+        }
+        .bst-bar {
+            margin-top: 15px;
+        }
+        .bst-bar h4 {
+            color: #8b949e;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+        .stat-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+            font-size: 0.85em;
+        }
+        .stat-name {
+            width: 40px;
+            color: #8b949e;
+        }
+        .stat-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .stat-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .stat-hp { background: #ff6b6b; }
+        .stat-atk { background: #feca57; }
+        .stat-def { background: #48dbfb; }
+        .stat-spa { background: #ff9ff3; }
+        .stat-spd { background: #54a0ff; }
+        .stat-spe { background: #5f27cd; }
+        .stat-value {
+            width: 30px;
+            text-align: right;
+        }
+        .error-message {
+            background: rgba(255,0,0,0.2);
+            border: 1px solid rgba(255,0,0,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            color: #ff6b6b;
+            display: none;
+        }
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #8b949e;
+            margin-top: 40px;
+        }
+        footer a {
+            color: #48dbfb;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎮 宝可梦VGC队伍推荐器</h1>
+            <p class="subtitle">基于VGC 2026 Regulation F规则的队伍构建工具</p>
+        </header>
+
+        <div class="controls">
+            <div class="strategy-selector">
+                <button class="strategy-btn active" data-strategy="balanced">⚖️ 平衡队</button>
+                <button class="strategy-btn" data-strategy="offensive">⚔️ 进攻队</button>
+                <button class="strategy-btn" data-strategy="defensive">🛡️ 防守队</button>
+                <button class="strategy-btn" data-strategy="trick-room">🔮 戏法空间队</button>
+            </div>
+            <button class="generate-btn" onclick="generateTeam()">✨ 生成推荐队伍</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>正在分析当前环境...</p>
+        </div>
+
+        <div class="error-message" id="error"></div>
+
+        <div class="team-display" id="team-display"></div>
+
+        <footer>
+            <p>数据来源: Pikalytics VGC 2026 Regulation F</p>
+            <p>项目地址: <a href="https://github.com/zorazeroyzz/pokemon-sv-team-builder">GitHub</a></p>
+        </footer>
+    </div>
+
+    <script>
+        let currentStrategy = 'balanced';
+
+        // 策略按钮切换
+        document.querySelectorAll('.strategy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentStrategy = btn.dataset.strategy;
+            });
+        });
+
+        // 类型颜色映射
+        const typeColors = {
+            '一般': 'normal', '火': 'fire', '水': 'water', '电': 'electric',
+            '草': 'grass', '冰': 'ice', '格斗': 'fighting', '毒': 'poison',
+            '地面': 'ground', '飞行': 'flying', '超能力': 'psychic', '虫': 'bug',
+            '岩石': 'rock', '幽灵': 'ghost', '龙': 'dragon', '恶': 'dark',
+            '钢': 'steel', '妖精': 'fairy'
+        };
+
+        function generateTeam() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const display = document.getElementById('team-display');
+
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            display.innerHTML = '';
+
+            // 模拟API调用（实际使用时替换为真实API）
+            setTimeout(() => {
+                loading.style.display = 'none';
+                
+                // 示例数据（实际应从API获取）
+                const mockData = getMockTeamData(currentStrategy);
+                renderTeam(mockData);
+            }, 1000);
+        }
+
+        function getMockTeamData(strategy) {
+            const teams = {
+                'balanced': [
+                    {name: 'flutter-mane', name_zh: '振翼发', types: ['幽灵', '妖精'], bst: 570, moves: ['月亮之力', '暗影球', '力量宝石', '冰冻之风'], item: '气势披带', nature: '胆小', stats: {hp: 55, attack: 55, defense: 55, sp_attack: 135, sp_defense: 135, speed: 135}},
+                    {name: 'iron-hands', name_zh: '铁臂膀', types: ['格斗', '电'], bst: 570, moves: ['击掌奇袭', '吸取拳', '疯狂伏特', '伏特替换'], item: '突击背心', nature: '固执', stats: {hp: 154, attack: 140, defense: 108, sp_attack: 50, sp_defense: 68, speed: 50}},
+                    {name: 'tornadus-incarnate', name_zh: '龙卷云-化身', types: ['飞行'], bst: 580, moves: ['顺风', '求雨', '挑衅', '枯叶风暴'], item: '气势披带', nature: '胆小', stats: {hp: 79, attack: 100, defense: 80, sp_attack: 110, sp_defense: 90, speed: 121}},
+                    {name: 'landorus-therian', name_zh: '土地云-灵兽', types: ['地面', '飞行'], bst: 600, moves: ['地震', '急速折返', '蛮力', '岩崩'], item: '讲究围巾', nature: '爽朗', stats: {hp: 89, attack: 145, defense: 90, sp_attack: 105, sp_defense: 80, speed: 91}},
+                    {name: 'incineroar', name_zh: '炽焰咆哮虎', types: ['火', '恶'], bst: 530, moves: ['击掌奇袭', '闪焰冲锋', '拍落', '抛下狠话'], item: '文柚果', nature: '固执', stats: {hp: 95, attack: 115, defense: 90, sp_attack: 80, sp_defense: 90, speed: 60}},
+                    {name: 'urshifu-rapid-strike', name_zh: '武道熊师-连击流', types: ['格斗', '水'], bst: 550, moves: ['水流连打', '近身战', '水流喷射', '守住'], item: '气势披带', nature: '爽朗', stats: {hp: 100, attack: 130, defense: 100, sp_attack: 63, sp_defense: 60, speed: 97}}
+                ],
+                'trick-room': [
+                    {name: 'skeledirge', name_zh: '骨纹巨声鳄', types: ['火', '幽灵'], bst: 530, moves: ['闪焰高歌', '暗影球', '偷懒', '守住'], item: '讲究眼镜', nature: '冷静', stats: {hp: 104, attack: 75, defense: 100, sp_attack: 110, sp_defense: 75, speed: 66}},
+                    {name: 'armarouge', name_zh: '红莲铠骑', types: ['火', '超能力'], bst: 525, moves: ['铠农炮', '精神强念', '广域战力', '守住'], item: '气势披带', nature: '冷静', stats: {hp: 85, attack: 60, defense: 100, sp_attack: 125, sp_defense: 80, speed: 75}},
+                    {name: 'torkoal', name_zh: '煤炭龟', types: ['火'], bst: 470, moves: ['喷烟', '日光束', '清除之烟', '守住'], item: '木炭', nature: '冷静', stats: {hp: 70, attack: 85, defense: 140, sp_attack: 85, sp_defense: 70, speed: 20}},
+                    {name: 'farigiraf', name_zh: '奇麒麟', types: ['一般', '超能力'], bst: 520, moves: ['双光束', '戏法空间', '守住', '精神冲击'], item: '气势披带', nature: '冷静', stats: {hp: 120, attack: 90, defense: 70, sp_attack: 110, sp_defense: 70, speed: 60}},
+                    {name: 'iron-hands', name_zh: '铁臂膀', types: ['格斗', '电'], bst: 570, moves: ['击掌奇袭', '吸取拳', '疯狂伏特', '伏特替换'], item: '突击背心', nature: '勇敢', stats: {hp: 154, attack: 140, defense: 108, sp_attack: 50, sp_defense: 68, speed: 50}},
+                    {name: 'flutter-mane', name_zh: '振翼发', types: ['幽灵', '妖精'], bst: 570, moves: ['月亮之力', '暗影球', '力量宝石', '冰冻之风'], item: '气势披带', nature: '胆小', stats: {hp: 55, attack: 55, defense: 55, sp_attack: 135, sp_defense: 135, speed: 135}}
+                ]
+            };
+            
+            return teams[strategy] || teams['balanced'];
+        }
+
+        function renderTeam(team) {
+            const display = document.getElementById('team-display');
+            
+            team.forEach((pokemon, index) => {
+                const card = document.createElement('div');
+                card.className = 'pokemon-card';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                const typesHtml = pokemon.types.map(t => 
+                    `<span class="type-badge type-${typeColors[t] || 'normal'}">${t}</span>`
+                ).join('');
+                
+                const movesHtml = pokemon.moves.map(m => 
+                    `<span class="move-tag">${m}</span>`
+                ).join('');
+                
+                const maxStat = Math.max(...Object.values(pokemon.stats));
+                
+                const statsHtml = Object.entries(pokemon.stats).map(([stat, value]) => {
+                    const statNames = {
+                        'hp': 'HP', 'attack': '攻击', 'defense': '防御',
+                        'sp_attack': '特攻', 'sp_defense': '特防', 'speed': '速度'
+                    };
+                    const statClass = `stat-${stat.substring(0, 3)}`;
+                    const percentage = (value / maxStat) * 100;
+                    return `
+                        <div class="stat-row">
+                            <span class="stat-name">${statNames[stat]}</span>
+                            <div class="stat-bar">
+                                <div class="stat-fill ${statClass}" style="width: ${percentage}%"></div>
+                            </div>
+                            <span class="stat-value">${value}</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                card.innerHTML = `
+                    <div class="pokemon-header">
+                        <div class="pokemon-sprite">🎮</div>
+                        <div class="pokemon-info">
+                            <h3>${pokemon.name_zh}</h3>
+                            <div class="name-en">${pokemon.name}</div>
+                            <div class="types">${typesHtml}</div>
+                        </div>
+                    </div>
+                    <div class="moves-section">
+                        <h4>推荐技能</h4>
+                        <div class="moves-list">${movesHtml}</div>
+                    </div>
+                    <div class="item-nature">
+                        <div>
+                            <h4>道具</h4>
+                            <div class="value">${pokemon.item}</div>
+                        </div>
+                        <div>
+                            <h4>性格</h4>
+                            <div class="value">${pokemon.nature}</div>
+                        </div>
+                    </div>
+                    <div class="bst-bar">
+                        <h4>种族值 (BST: ${pokemon.bst})</h4>
+                        ${statsHtml}
+                    </div>
+                `;
+                
+                display.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
