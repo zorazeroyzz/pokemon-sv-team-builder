@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宝可梦朱紫 VGC 2026 图鉴</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #f0f6fc;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #58a6ff;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #8b949e;
+            font-size: 1.1em;
+        }
+        .image-section {
+            background: #161b22;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #30363d;
+        }
+        .image-section h2 {
+            color: #58a6ff;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        .image-section p {
+            color: #8b949e;
+            margin-bottom: 15px;
+        }
+        .image-container {
+            overflow-x: auto;
+            background: #0d1117;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: #161b22;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #30363d;
+        }
+        .stat-number {
+            font-size: 2.5em;
+            color: #58a6ff;
+            font-weight: bold;
+        }
+        .stat-label {
+            color: #8b949e;
+            margin-top: 5px;
+        }
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #8b949e;
+            border-top: 1px solid #30363d;
+            margin-top: 40px;
+        }
+        a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .download-btn {
+            display: inline-block;
+            background: #238636;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .download-btn:hover {
+            background: #2ea043;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎮 宝可梦朱紫 VGC 2026</h1>
+            <p class="subtitle">完整图鉴 · 队伍推荐 · PKHeX资源</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">1025</div>
+                <div class="stat-label">全国图鉴</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">413</div>
+                <div class="stat-label">朱紫可用</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">25</div>
+                <div class="stat-label">Pikalytics数据</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1487</div>
+                <div class="stat-label">PKHeX立绘</div>
+            </div>
+        </div>
+
+        <div class="image-section">
+            <h2>📊 版本答案推荐</h2>
+            <p>基于Pikalytics VGC 2026 Regulation F数据的顶级队伍配置</p>
+            <div class="image-container">
+                <img src="docs/images/vgc_tierlist.png" alt="版本答案推荐">
+            </div>
+            <a href="docs/images/vgc_tierlist.png" download class="download-btn">下载图片</a>
+        </div>
+
+        <div class="image-section">
+            <h2>🎯 完整推荐阵容</h2>
+            <p>PKHeX风格的完整队伍推荐（12只核心宝可梦）</p>
+            <div class="image-container">
+                <img src="docs/images/vgc_complete_tierlist.png" alt="完整推荐">
+            </div>
+            <a href="docs/images/vgc_complete_tierlist.png" download class="download-btn">下载图片</a>
+        </div>
+
+        <div class="image-section">
+            <h2>📚 全国图鉴 1025只</h2>
+            <p>使用PKHeX官方立绘的完整宝可梦图鉴（第1-9世代）</p>
+            <div class="image-container">
+                <img src="docs/images/vgc_pkhex_all_1025.png" alt="全国图鉴" style="max-height: 800px; object-fit: contain;">
+            </div>
+            <a href="docs/images/vgc_pkhex_all_1025.png" download class="download-btn">下载完整图鉴（6.4MB）</a>
+        </div>
+
+        <footer>
+            <p>数据来源: <a href="https://pikalytics.com">Pikalytics</a> | 立绘来源: <a href="https://github.com/kwsch/PKHeX">PKHeX</a></p>
+            <p>项目地址: <a href="https://github.com/zorazeroyzz/pokemon-sv-team-builder">github.com/zorazeroyzz/pokemon-sv-team-builder</a></p>
+        </footer>
+    </div>
+</body>
+</html>
